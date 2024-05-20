@@ -279,7 +279,7 @@ for (x in 1:length(test_comparisons)) {
   
   # find DEGs
   airway_genes = FindMarkers(Airway_Progenitor_Cells_sobj, ident.1 = test_comparisons[[x]][1], ident.2 = test_comparisons[[x]][2], group.by = 'cell_hormone_edc')
-  
+
   # assign DEGs results to list that collects them all
   degs_airway[[x]] = filter(airway_genes, p_val_adj < FDR)
   genes_airway[[x]] = airway_genes
@@ -289,10 +289,10 @@ for (x in 1:length(test_comparisons)) {
   # also, save results as a table
   # airway genes
   write.csv(genes_airway[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], '_All_genes.csv'))
-  
+
   # DEGs
   write.csv(degs_airway[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], '_DEGs_FDR_', FDR, '.csv'))
-  
+
   # how many genes have been tested and how many DEGs (FDR < 0.05) there are
   num_genes = nrow(genes_airway[[x]])
   num_DEGs = nrow(degs_airway[[x]])
