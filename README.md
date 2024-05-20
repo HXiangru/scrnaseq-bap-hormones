@@ -27,12 +27,9 @@ library(gridExtra)
 library(reshape2)
 library(UpSetR)
 library(shadowtext)
-```r
+```
 
 ---
-
-
-
 
 ## Data Pre-processing
 
@@ -171,10 +168,80 @@ clusters <- Idents(sobj)
 
 sobj <- RunUMAP(sobj, dims = 1:length(levels(clusters)))
 DimPlot(sobj, reduction = 'umap', label = T, seed = 42, group.by = 'seurat_clusters')
+```
+
+---
+
+## Annotation
+
 ```r
+############################## Annotate clusters ###############################
+
+# load gene set preparation function
+source("gene_sets_prepare.R")
+# load cell type annotation function
+source("sctype_score_.R")
+
+# DB file
+db <- 'ScTypeDB_full - thyroid.xlsx'
+tissue <- c('Thyroid')
+
+# prepare gene sets
+gs_list <- gene_sets_prepare(db,tissue)
+
+# check Seurat object version (scRNA-seq matrix extracted differently in Seurat v4/v5)
+#seurat_package_v5 <- isFALSE('counts' %in% names(attributes(sobj[["RNA"]])));
+#print(sprintf("Seurat object %s is used", ifelse(seurat_package_v5, "v5", "v4")))
+
+# extract scaled scRNA-seq matrix
+scRNAseqData_scaled <- if (seurat_package_v5) as.matrix(sobj[["RNA"]]$scale.data) else as.matrix(sobj[["RNA"]]@scale.data)
+
+# run ScType
+es.max <- sctype_score(scRNAseqData = scRNAseqData_scaled, scaled = TRUE, gs = gs_list$gs_positive, gs2 = gs_list$gs_negative)
+
+# merge by cluster
+cL_resutls = do.call('rbind', lapply(unique(sobj@meta.data$seurat_clusters), function(cl){
+  es.max.cl = sort(rowSums(es.max[ , rownames(sobj@meta.data[sobj@meta.data$seurat_clusters == cl, ])]), decreasing = !0)
+  head(data.frame(cluster = cl, type = names(es.max.cl), scores = es.max.cl, ncells = sum(sobj@meta.data$seurat_clusters == cl)), 10)
+}))
+sctype_scores = cL_resutls %>% group_by(cluster) %>% top_n(n = 1, wt = scores)
+
+# set low-confident (low ScType score) clusters to 'unknown'
+sctype_scores$type[as.numeric(as.character(sctype_scores$scores)) < sctype_scores$ncells/4] = 'Unknown'
+print(sctype_scores[, 1:3])
+# Overlay the annotation on the TSNE
+sobj@meta.data$customclassif = ''
+for(j in unique(sctype_scores$cluster)){
+  cl_type = sctype_scores[sctype_scores$cluster == j,]; 
+  sobj@meta.data$customclassif[sobj@meta.data$seurat_clusters == j] = as.character(cl_type$type[1])
+}
+DimPlot(sobj, reduction = 'umap', label = TRUE, seed = 42, repel = T, group.by = c('customclassif')) 
+ggsave('/plots/UMAP_classification.png', width = 9, height = 8, unit = 'in', dpi = 300)
 
 
-## Data Pre-processing
+# Numbers each cell type
+Cell <- unique(sobj@meta.data$customclassif)
+cell_type <- data.frame(Cell = character(), Count = numeric())
+for (n in Cell) {
+  count1 <- sum(sobj@meta.data$customclassif == n)
+  cell_type <- rbind(cell_type, data.frame(Cell = n, Count = count1))
+}
+print(cell_type)
+ggplot(data = cell_type, aes(x = Cell, y = Count, fill = Cell)) + 
+  geom_bar(stat = 'identity') +  
+  labs(title = "Cell Type") +  
+  theme_bw() +
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_text(hjust = 1, vjust = .5, angle = 90),
+        legend.key.size = unit(0.5, "cm"),
+        panel.grid = element_blank(),
+        plot.title = element_text(hjust = 0.5))+
+  guides(fill = guide_legend(override.aes = list(shape = 5)))
+ggsave('plots/numbers_each__cell_type.png', width = 10, height = 16, units = 'cm', dpi = 300)
+```
+
+
+
 
 
 
