@@ -1,37 +1,64 @@
 # Impact of Benzo[a]pyrene and Sex Hormones on Human ESC-Derived Cells Using Single Cell Transcriptomics
 
 
+## Packages
+
+```r
+library(tidyverse)
+library(magrittr)
+library(Seurat)
+library(scCustomize)
+library(ggraph)
+library(igraph)
+library(HGNChelper)
+library(tuple)
+library(ggvenn)
+library(scater)
+library(clusterProfiler)
+library(org.Hs.eg.db)
+library(enrichplot)
+library(data.tree)
+library(ReactomePA)
+library(topGO)
+library(Rgraphviz)
+library(readxl)
+library(dplyr)
+library(gridExtra)
+library(reshape2)
+library(UpSetR)
+library(shadowtext)
+```r
+
 ## Data Pre-processing
 
 ```r
-
 ############################ Create Seurat object ##############################
 
 FDR = 0.05
 `%notin%` = Negate(`%in%`)
 
 # Load the dataset
-Untr_Ctrl.data <- Read10X(data.dir = 'C:/Users/14528/OneDrive/桌面/新建文件夹/000MSP/2023-2024/毕业论文-正式材料/参考文件/测序/data/Untr_Ctrl/raw_feature_bc_matrix/')
+Untr_Ctrl.data <- Read10X(data.dir = 'data/Untr_Ctrl/raw_feature_bc_matrix/')
 Untr_Ctrl.data <- CreateSeuratObject(counts = Untr_Ctrl.data, project = 'Untr_Ctrl')
 Untr_Ctrl.data
 
-Untr_BaP.data <- Read10X(data.dir = 'C:/Users/14528/OneDrive/桌面/新建文件夹/000MSP/2023-2024/毕业论文-正式材料/参考文件/测序/data/Untr_BaP/raw_feature_bc_matrix/')
+Untr_BaP.data <- Read10X(data.dir = 'data/Untr_BaP/raw_feature_bc_matrix/')
 Untr_BaP.data <- CreateSeuratObject(counts = Untr_BaP.data, project = 'Untr_BaP')
 Untr_BaP.data
 
-Male_Ctrl.data <- Read10X(data.dir = 'C:/Users/14528/OneDrive/桌面/新建文件夹/000MSP/2023-2024/毕业论文-正式材料/参考文件/测序/data/Male_Ctrl/raw_feature_bc_matrix/')
+Male_Ctrl.data <- Read10X(data.dir = 'data/Male_Ctrl/raw_feature_bc_matrix/')
 Male_Ctrl.data <- CreateSeuratObject(counts = Male_Ctrl.data, project = 'Male_Ctrl')
 Male_Ctrl.data
 
-Male_BaP.data <- Read10X(data.dir = 'C:/Users/14528/OneDrive/桌面/新建文件夹/000MSP/2023-2024/毕业论文-正式材料/参考文件/测序/data/Male_BaP/raw_feature_bc_matrix/')
+Male_BaP.data <- Read10X(data.dir = 'data/Male_BaP/raw_feature_bc_matrix/')
 Male_BaP.data <- CreateSeuratObject(counts = Male_BaP.data, project = 'Male_BaP')
 Male_BaP.data
 
-Female_Ctrl.data <- Read10X(data.dir = 'C:/Users/14528/OneDrive/桌面/新建文件夹/000MSP/2023-2024/毕业论文-正式材料/参考文件/测序/data/Female_Ctrl/raw_feature_bc_matrix/')
+Female_Ctrl.data <- Read10X(data.dir = 'data/Female_Ctrl/raw_feature_bc_matrix/')
 Female_Ctrl.data <- CreateSeuratObject(counts = Female_Ctrl.data, project = 'Female_Ctrl')
 Female_Ctrl.data
 
-Female_BaP.data <- Read10X(data.dir = 'C:/Users/14528/OneDrive/桌面/新建文件夹/000MSP/2023-2024/毕业论文-正式材料/参考文件/测序/data/Female_BaP/raw_feature_bc_matrix/')
+Female_BaP.data <- Read10X(data.dir = 'data/Female_BaP/raw_feature_bc_matrix/')
 Female_BaP.data <- CreateSeuratObject(counts = Female_BaP.data, project = 'Female_BaP')
 Female_BaP.data
 
@@ -52,7 +79,6 @@ sobj.before@meta.data %<>% dplyr::rename(sample = 'orig.ident') %>%
 
 # calculate % of reads mapping to mitochondrial DNA 
 sobj.before[['percent.mt']] <- PercentageFeatureSet(sobj.before, pattern = '^MT-')
-
 
 
 ################################################################################
@@ -78,8 +104,7 @@ p3 <- VlnPlot(sobj, features = 'percent.mt', raster = FALSE, assay = 'RNA', pt.s
                                'Untr_BaP' = '#fcc307', 'Untr_Ctrl' = '#f7de98')) +
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 patchwork::wrap_plots(p1, p2, p3, ncol = 3)
-ggsave('C:/Users/14528/OneDrive/桌面/新建文件夹/000MSP/2023-2024/毕业论文-正式材料/参考文件/测序/plots/after_filter_vln.png', width = 16, height = 8, unit = 'in', dpi = 300)
-
+ggsave('plots/after_filter_vln.png', width = 16, height = 8, unit = 'in', dpi = 300)
 
 
 # Cell numbers after filtering
@@ -104,14 +129,11 @@ ggplot(data = cell_count, aes(x = Sample, y = Count, fill = Sample)) +
                                'Male_BaP' = '#41b349', 'Male_Ctrl' = '#add5a2',
                                'Untr_Ctrl' = '#f7de98', 'Untr_BaP' = '#fcc307')) +
   guides(fill = guide_legend(override.aes = list(color = "black", size = 1)))
-ggsave('C:/Users/14528/OneDrive/桌面/新建文件夹/000MSP/2023-2024/毕业论文-正式材料/参考文件/测序/plots/cells_after_filter.png', width = 10, height = 16, units = 'cm', dpi = 300)
-
+ggsave('plots/cells_after_filter.png', width = 10, height = 16, units = 'cm', dpi = 300)
 
 
 ################################################################################
 ################ Normalize data, run PCA and divide into clusters ##############
-
-
 
 # normalize data
 sobj[['percent.mt']] = PercentageFeatureSet(sobj, pattern = '^MT-')
@@ -143,11 +165,10 @@ clusters <- Idents(sobj)
 
 sobj <- RunUMAP(sobj, dims = 1:length(levels(clusters)))
 DimPlot(sobj, reduction = 'umap', label = T, seed = 42, group.by = 'seurat_clusters')
-
 ```r
 
 
-
+## Data Pre-processing
 
 
 
