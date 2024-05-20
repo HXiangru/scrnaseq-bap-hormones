@@ -1,4 +1,5 @@
 # Impact of Benzo[a]pyrene and Sex Hormones on Human ESC-Derived Cells Using Single Cell Transcriptomics
+#### Author: XiangRu Huang
 
 
 ## Packages
@@ -1483,7 +1484,7 @@ p4 <- AverageExpression(Fibroblasts_sobj, features = genes, group.by = 'sample')
   as.data.frame() %>%
   rownames_to_column(var = 'gene') %>%
   reshape2::melt(id.vars = 'gene',
-                 variable.name = 'Sample',  # 将变量名更改为'Sample'
+                 variable.name = 'Sample',  
                  value.name = 'Average expression') %>%
   mutate(Sample = sub('RNA\\.', '', Sample)) %>%
   mutate(Sample = gsub('\\.', ' ', Sample)) %>%
