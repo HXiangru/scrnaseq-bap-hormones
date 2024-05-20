@@ -283,15 +283,15 @@ for (x in 1:length(test_comparisons)) {
   # assign DEGs results to list that collects them all
   degs_airway[[x]] = filter(airway_genes, p_val_adj < FDR)
   genes_airway[[x]] = airway_genes
-  names(degs_airway)[[x]] = paste0(test_comparisons[[x]][1], '_VS_', test_comparisons[[x]][2])
-  names(genes_airway)[[x]] = paste0(test_comparisons[[x]][1], '_VS_', test_comparisons[[x]][2])
+  names(degs_airway)[[x]] = paste0(test_comparisons[[x]][1], 'VS', test_comparisons[[x]][2])
+  names(genes_airway)[[x]] = paste0(test_comparisons[[x]][1], 'VS', test_comparisons[[x]][2])
   
   # also, save results as a table
   # airway genes
-  write.csv(genes_airway[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], '_All_genes.csv'))
+  write.csv(genes_airway[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], 'All_genes.csv'))
 
   # DEGs
-  write.csv(degs_airway[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], '_DEGs_FDR_', FDR, '.csv'))
+  write.csv(degs_airway[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], 'DEGs_FDR', FDR, '.csv'))
 
   # how many genes have been tested and how many DEGs (FDR < 0.05) there are
   num_genes = nrow(genes_airway[[x]])
@@ -305,7 +305,7 @@ for (x in 1:length(test_comparisons)) {
 degs_airway_save <- degs_airway
 for (x in 1:length(degs_airway)) {
   names(degs_airway_save)[x] <- paste0(map_chr(str_split(test_comparisons[[x]][1], 'Airway progenitor cells_'), 2), 
-                                    '_VS_',
+                                    'VS',
                                     map_chr(str_split(test_comparisons[[x]][2], 'Airway progenitor cells_'), 2))
   
   degs_airway_save[[x]] <- degs_airway_save[[x]] %>% rownames_to_column(var = 'gene')
@@ -314,7 +314,7 @@ writexl::write_xlsx(degs_airway_save, 'DEGs_airway_comparisons.xlsx')
 genes_airway_save = genes_airway
 for (x in 1:length(genes_airway)) {
   names(genes_airway_save)[x] = paste0(map_chr(str_split(test_comparisons[[x]][1], 'Airway progenitor cells_'), 2), 
-                                    '_VS_',
+                                    'VS',
                                     map_chr(str_split(test_comparisons[[x]][2], 'Airway progenitor cells_'), 2))
   
   genes_airway_save[[x]] %<>% rownames_to_column(var = 'gene')
@@ -345,19 +345,19 @@ for (x in 1:length(test_comparisons)) {
   
   # find DEGs
   cardiovascular_genes = FindMarkers(Cardiovascular_Cells_sobj, ident.1 = test_comparisons[[x]][1], ident.2 = test_comparisons[[x]][2], group.by = 'cell_hormone_edc')
-  
+
   # assign DEGs results to list that collects them all
   degs_cardiovascular[[x]] = filter(cardiovascular_genes, p_val_adj < FDR)
   genes_cardiovascular[[x]] = cardiovascular_genes
-  names(degs_cardiovascular)[[x]] = paste0(test_comparisons[[x]][1], '_VS_', test_comparisons[[x]][2])
-  names(genes_cardiovascular)[[x]] = paste0(test_comparisons[[x]][1], '_VS_', test_comparisons[[x]][2])
+  names(degs_cardiovascular)[[x]] = paste0(test_comparisons[[x]][1], 'VS', test_comparisons[[x]][2])
+  names(genes_cardiovascular)[[x]] = paste0(test_comparisons[[x]][1], 'VS', test_comparisons[[x]][2])
   
   # also, save results as a table
   # all genes
-  write.csv(degs_cardiovascular[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], '_All_genes.csv'))
+  write.csv(degs_cardiovascular[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], 'All_genes.csv'))
   
   # DEGs
-  write.csv(degs_cardiovascular[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], '_DEGs_FDR_', FDR, '.csv'))
+  write.csv(degs_cardiovascular[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], 'DEGs_FDR', FDR, '.csv'))
   
   # how many genes have been tested and how many DEGs (FDR < 0.05) there are
   num_genes = nrow(genes_cardiovascular[[x]])
@@ -371,7 +371,7 @@ for (x in 1:length(test_comparisons)) {
 degs_cardiovascular_save <- degs_cardiovascular
 for (x in 1:length(degs_cardiovascular)) {
   names(degs_cardiovascular)[x] <- paste0(map_chr(str_split(test_comparisons[[x]][1], 'Cardiovascular cells_'), 2), 
-                                       '_VS_',
+                                       'VS',
                                        map_chr(str_split(test_comparisons[[x]][2], 'Cardiovascular cells_'), 2))
   
   degs_cardiovascular[[x]] <- degs_cardiovascular[[x]] %>% rownames_to_column(var = 'gene')
@@ -380,7 +380,7 @@ writexl::write_xlsx(degs_cardiovascular, 'DEGs_cardiovascular_comparisons.xlsx')
 genes_cardiovascular_save = genes_cardiovascular
 for (x in 1:length(genes_cardiovascular)) {
   names(genes_cardiovascular_save)[x] = paste0(map_chr(str_split(test_comparisons[[x]][1], 'Cardiovascular cells_'), 2), 
-                                       '_VS_',
+                                       'VS',
                                        map_chr(str_split(test_comparisons[[x]][2], 'Cardiovascular cells_'), 2))
   
   genes_cardiovascular_save[[x]] %<>% rownames_to_column(var = 'gene')
@@ -415,15 +415,15 @@ for (x in 1:length(test_comparisons)) {
   # assign DEGs results to list that collects them all
   degs_embryonic[[x]] = filter(embryonic_genes, p_val_adj < FDR)
   genes_embryonic[[x]] = embryonic_genes
-  names(degs_embryonic)[[x]] = paste0(test_comparisons[[x]][1], '_VS_', test_comparisons[[x]][2])
-  names(genes_embryonic)[[x]] = paste0(test_comparisons[[x]][1], '_VS_', test_comparisons[[x]][2])
+  names(degs_embryonic)[[x]] = paste0(test_comparisons[[x]][1], 'VS', test_comparisons[[x]][2])
+  names(genes_embryonic)[[x]] = paste0(test_comparisons[[x]][1], 'VS', test_comparisons[[x]][2])
   
   # also, save results as a table
   # embryonic genes
-  write.csv(genes_embryonic[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], '_All_genes.csv'))
+  write.csv(genes_embryonic[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], 'All_genes.csv'))
   
   # DEGs
-  write.csv(degs_embryonic[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], '_DEGs_FDR_', FDR, '.csv'))
+  write.csv(degs_embryonic[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], 'DEGs_FDR', FDR, '.csv'))
   
   # how many genes have been tested and how many DEGs (FDR < 0.05) there are
   num_genes = nrow(genes_embryonic[[x]])
@@ -437,7 +437,7 @@ for (x in 1:length(test_comparisons)) {
 degs_embryonic_save <- degs_embryonic
 for (x in 1:length(degs_embryonic)) {
   names(degs_embryonic_save)[x] <- paste0(map_chr(str_split(test_comparisons[[x]][1], 'Embryonic stem cells_'), 2), 
-                                    '_VS_',
+                                    'VS',
                                     map_chr(str_split(test_comparisons[[x]][2], 'Embryonic stem cells_'), 2))
   
   degs_embryonic_save[[x]] <- degs_embryonic_save[[x]] %>% rownames_to_column(var = 'gene')
@@ -446,7 +446,7 @@ writexl::write_xlsx(degs_embryonic_save, 'DEGs_embryonic_comparisons.xlsx')
 genes_embryonic_save = genes_embryonic
 for (x in 1:length(genes_embryonic)) {
   names(genes_embryonic_save)[x] = paste0(map_chr(str_split(test_comparisons[[x]][1], 'Embryonic stem cells_'), 2), 
-                                    '_VS_',
+                                    'VS',
                                     map_chr(str_split(test_comparisons[[x]][2], 'Embryonic stem cells_'), 2))
   
   genes_embryonic_save[[x]] %<>% rownames_to_column(var = 'gene')
@@ -480,15 +480,15 @@ for (x in 1:length(test_comparisons)) {
   # assign DEGs results to list that collects them all
   degs_epithelial[[x]] = filter(epithelial_genes, p_val_adj < FDR)
   genes_epithelial[[x]] = epithelial_genes
-  names(degs_epithelial)[[x]] = paste0(test_comparisons[[x]][1], '_VS_', test_comparisons[[x]][2])
-  names(genes_epithelial)[[x]] = paste0(test_comparisons[[x]][1], '_VS_', test_comparisons[[x]][2])
+  names(degs_epithelial)[[x]] = paste0(test_comparisons[[x]][1], 'VS', test_comparisons[[x]][2])
+  names(genes_epithelial)[[x]] = paste0(test_comparisons[[x]][1], 'VS', test_comparisons[[x]][2])
   
   # also, save results as a table
   # epithelial genes
-  write.csv(genes_epithelial[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], '_All_genes.csv'))
+  write.csv(genes_epithelial[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], 'All_genes.csv'))
   
   # DEGs
-  write.csv(degs_epithelial[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], '_DEGs_FDR_', FDR, '.csv'))
+  write.csv(degs_epithelial[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], 'DEGs_FDR', FDR, '.csv'))
   
   # how many genes have been tested and how many DEGs (FDR < 0.05) there are
   num_genes = nrow(genes_epithelial[[x]])
@@ -502,7 +502,7 @@ for (x in 1:length(test_comparisons)) {
 degs_epithelial_save <- degs_epithelial
 for (x in 1:length(degs_epithelial)) {
   names(degs_epithelial_save)[x] <- paste0(map_chr(str_split(test_comparisons[[x]][1], 'Epithelial cells_'), 2), 
-                                    '_VS_',
+                                    'VS',
                                     map_chr(str_split(test_comparisons[[x]][2], 'Epithelial cells_'), 2))
   
   degs_epithelial_save[[x]] <- degs_epithelial_save[[x]] %>% rownames_to_column(var = 'gene')
@@ -511,7 +511,7 @@ writexl::write_xlsx(degs_epithelial_save, 'DEGs_epithelial_comparisons.xlsx')
 genes_epithelial_save = genes_epithelial
 for (x in 1:length(genes_epithelial)) {
   names(genes_epithelial_save)[x] = paste0(map_chr(str_split(test_comparisons[[x]][1], 'Epithelial cells_'), 2), 
-                                    '_VS_',
+                                    'VS',
                                     map_chr(str_split(test_comparisons[[x]][2], 'Epithelial cells_'), 2))
   
   genes_epithelial_save[[x]] %<>% rownames_to_column(var = 'gene')
@@ -546,15 +546,15 @@ for (x in 1:length(test_comparisons)) {
   # assign DEGs results to list that collects them all
   degs_fibroblast[[x]] = filter(fibroblast_genes, p_val_adj < FDR)
   genes_fibroblast[[x]] = fibroblast_genes
-  names(degs_fibroblast)[[x]] = paste0(test_comparisons[[x]][1], '_VS_', test_comparisons[[x]][2])
-  names(genes_fibroblast)[[x]] = paste0(test_comparisons[[x]][1], '_VS_', test_comparisons[[x]][2])
+  names(degs_fibroblast)[[x]] = paste0(test_comparisons[[x]][1], 'VS', test_comparisons[[x]][2])
+  names(genes_fibroblast)[[x]] = paste0(test_comparisons[[x]][1], 'VS', test_comparisons[[x]][2])
   
   # also, save results as a table
   # fibroblast genes
-  write.csv(genes_fibroblast[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], '_All_genes.csv'))
+  write.csv(genes_fibroblast[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], 'All_genes.csv'))
   
   # DEGs
-  write.csv(degs_fibroblast[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], '_DEGs_FDR_', FDR, '.csv'))
+  write.csv(degs_fibroblast[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], 'DEGs_FDR', FDR, '.csv'))
   
   # how many genes have been tested and how many DEGs (FDR < 0.05) there are
   num_genes = nrow(genes_fibroblast[[x]])
@@ -568,7 +568,7 @@ for (x in 1:length(test_comparisons)) {
 degs_fibroblast_save <- degs_fibroblast
 for (x in 1:length(degs_fibroblast)) {
   names(degs_fibroblast_save)[x] <- paste0(map_chr(str_split(test_comparisons[[x]][1], 'Fibroblasts_'), 2), 
-                                    '_VS_',
+                                    'VS',
                                     map_chr(str_split(test_comparisons[[x]][2], 'Fibroblasts_'), 2))
   
   degs_fibroblast_save[[x]] <- degs_fibroblast_save[[x]] %>% rownames_to_column(var = 'gene')
@@ -577,7 +577,7 @@ writexl::write_xlsx(degs_fibroblast_save, 'DEGs_fibroblasts_comparisons.xlsx')
 genes_fibroblast_save = genes_fibroblast
 for (x in 1:length(genes_fibroblast)) {
   names(genes_fibroblast_save)[x] = paste0(map_chr(str_split(test_comparisons[[x]][1], 'Fibroblasts_'), 2), 
-                                    '_VS_',
+                                    'VS',
                                     map_chr(str_split(test_comparisons[[x]][2], 'Fibroblasts_'), 2))
   
   genes_fibroblast_save[[x]] %<>% rownames_to_column(var = 'gene')
@@ -612,15 +612,15 @@ for (x in 1:length(test_comparisons)) {
   # assign DEGs results to list that collects them all
   degs_goblet[[x]] = filter(goblet_genes, p_val_adj < FDR)
   genes_goblet[[x]] = goblet_genes
-  names(degs_goblet)[[x]] = paste0(test_comparisons[[x]][1], '_VS_', test_comparisons[[x]][2])
-  names(genes_goblet)[[x]] = paste0(test_comparisons[[x]][1], '_VS_', test_comparisons[[x]][2])
+  names(degs_goblet)[[x]] = paste0(test_comparisons[[x]][1], 'VS', test_comparisons[[x]][2])
+  names(genes_goblet)[[x]] = paste0(test_comparisons[[x]][1], 'VS', test_comparisons[[x]][2])
   
   # also, save results as a table
   # all genes
-  write.csv(genes_goblet[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], '_All_genes.csv'))
+  write.csv(genes_goblet[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], 'All_genes.csv'))
   
   # DEGs
-  write.csv(degs_goblet[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], '_DEGs_FDR_', FDR, '.csv'))
+  write.csv(degs_goblet[[x]], paste0(test_comparisons[[x]][1], '_', test_comparisons[[x]][2], 'DEGs_FDR', FDR, '.csv'))
   
   # how many genes have been tested and how many DEGs (FDR < 0.05) there are
   num_genes = nrow(genes_goblet[[x]])
@@ -634,7 +634,7 @@ for (x in 1:length(test_comparisons)) {
 degs_goblet_save <- degs_goblet
 for (x in 1:length(degs_goblet)) {
   names(degs_goblet_save)[x] <- paste0(map_chr(str_split(test_comparisons[[x]][1], 'Goblet cells_'), 2), 
-                                    '_VS_',
+                                    'VS',
                                     map_chr(str_split(test_comparisons[[x]][2], 'Goblet cells_'), 2))
   
   degs_goblet_save[[x]] <- degs_goblet_save[[x]] %>% rownames_to_column(var = 'gene')
@@ -643,7 +643,7 @@ writexl::write_xlsx(degs_goblet_save, 'DEGs_goblet_comparisons.xlsx')
 genes_goblet_save = genes_goblet
 for (x in 1:length(genes_goblet)) {
   names(genes_goblet_save)[x] = paste0(map_chr(str_split(test_comparisons[[x]][1], 'Goblet cells_'), 2), 
-                                    '_VS_',
+                                    'VS',
                                     map_chr(str_split(test_comparisons[[x]][2], 'Goblet cells_'), 2))
   
   genes_goblet_save[[x]] %<>% rownames_to_column(var = 'gene')
